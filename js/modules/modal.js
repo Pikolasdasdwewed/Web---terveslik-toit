@@ -1,0 +1,52 @@
+function closeModal(modalSelector) {
+    const modal = document.querySelector(modalSelector);
+
+    modal.classList.add('hide');
+    modal.classList.remove('show');
+    document.body.style.overflow = '';
+}
+
+function openModal(modalSelector, modalTimerID) {
+    const modal = document.querySelector(modalSelector);
+
+    modal.classList.add('show');
+    modal.classList.remove('hide');
+    document.body.style.overflow = 'hidden';
+
+    if (modalTimerID) {
+        clearInterval(modalTimerID);
+    }
+}
+
+function modal(triggerSelector, modalSelector, modalTimerID) {
+    const modalTrigger = document.querySelectorAll(triggerSelector),
+        modalElem = document.querySelector(modalSelector);
+    
+    modalTrigger.forEach(btn => {
+        btn.addEventListener('click', () => openModal(modalSelector, modalTimerID));
+    });
+
+    modalElem.addEventListener('click', (e) => {
+        if (e.target === modalElem || e.target.getAttribute('data-close') === "") {
+            closeModal(modalSelector);
+        }
+    });
+    
+    document.addEventListener('keydown', (e) => {
+        if (e.code === "Escape" && modalElem.classList.contains('show')) {
+            closeModal(modalSelector);
+        }
+    });
+
+    function showModalByScroll() {
+        if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {
+            openModal(modalSelector, modalTimerID);
+            window.removeEventListener('scroll', showModalByScroll);
+        }
+    }
+
+    window.addEventListener('scroll', showModalByScroll);
+}
+
+export default modal;
+export {closeModal, openModal};
